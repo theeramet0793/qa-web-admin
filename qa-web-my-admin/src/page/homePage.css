@@ -1,0 +1,32 @@
+
+.home-page-container{
+  width: 100%;
+  height: 100%;
+}
+
+.btn-group{
+  display: flex;
+  justify-content: center;
+  align-items: start;
+}
+
+.status-container{
+  display: flex;
+  justify-content: center;
+  align-items: start;
+}
+
+.show-log-container{
+  display: flex;
+  justify-content: center;
+  align-items: start;
+}
+
+.my-1-section{
+ margin-top: 2rem;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
