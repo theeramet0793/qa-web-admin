@@ -6,7 +6,9 @@ import './homePage.css'
 const HomePage:React.FC = () =>{
 
   const [isWorking, setIsWorking] = useState<boolean>(false);
+  const [isAnalyst, setIsAnalyst] = useState<boolean>(false);
   const [result, setResult] = useState<IReccommendMovie[]>([]);
+  const [resultAnalyst, setResultAnalyst] = useState<string>();
 
   useEffect(() => {
     if(isWorking){
@@ -25,6 +27,23 @@ const HomePage:React.FC = () =>{
     }
   }, [isWorking]);
 
+  useEffect(() => {
+    if(isAnalyst){
+      const interval = setInterval(() => {
+        //console.log('This will be called every 10 seconds');
+        Client.post('/start-analyst-one-post')
+        .then((res)=>{
+          if(res.status === 200)
+          setResultAnalyst(res.data)
+        }).catch((err)=>{
+          console.log(err);
+        })
+      }, 15000);
+    
+      return () => clearInterval(interval);
+    }
+  }, [isAnalyst]);
+
   const list2row = (list:IMovie[]) =>{
     return(
         list.map((movie, index)=>{
@@ -38,29 +57,42 @@ const HomePage:React.FC = () =>{
 
   return(
     <div className="home-page-container">
-      <div className="btn-group">
-        <button className="btn-start" onClick={()=>{setIsWorking(true)}}>Start</button>
-        <button className="btn-stop" onClick={()=>{setIsWorking(false)}}>Stop</button>
-      </div>
-      <div className="status-container">
-        <div>{isWorking? 'Now Working':'Now Stop'}</div>
-      </div>
-      <div className="show-log-container">
-        <div>
-        { 
-          result.map((item, index)=>{
-            return(
-              <div key={index} className="my-1-section">
-                <div>{"PostId = "+item.postId}</div>
-                <div>
-                  <table>
-                   {list2row(item.movielist)} 
-                  </table>
-                </div>
-              </div>
-            )
-          })
-        }
+      <div className="row">
+        <div className="column column-1">
+          <div className="btn-group">
+            <button className="btn-start" onClick={()=>{setIsWorking(true)}}>Start</button>
+            <button className="btn-stop" onClick={()=>{setIsWorking(false)}}>Stop</button>
+          </div>
+          <div className="status-container">
+            <div>{isWorking? 'Now Working':'Now Stop'}</div>
+          </div>
+          <div className="show-log-container">
+            <div>
+              { 
+                result.map((item, index)=>{
+                  return(
+                    <div key={index} className="my-1-section">
+                      <div>{"PostId = "+item.postId}</div>
+                      <div>
+                        <table>
+                        {list2row(item.movielist)} 
+                        </table>
+                      </div>
+                    </div>
+                  )
+                })
+              }
+            </div>
+          </div>
+        </div>
+        <div className="column column-2">
+          <div className="btn-group">
+            <button className="btn-start" onClick={()=>{setIsAnalyst(true)}}>Start</button>
+            <button className="btn-stop" onClick={()=>{setIsAnalyst(false)}}>Stop</button>
+          </div>
+          <div className="status-container">
+            <div>{isAnalyst? 'Now Analyzing':'Now Stop Analyzing'}</div>
+          </div>
         </div>
       </div>
     </div>
