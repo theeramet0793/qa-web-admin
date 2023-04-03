@@ -8,7 +8,7 @@ const HomePage:React.FC = () =>{
   const [isWorking, setIsWorking] = useState<boolean>(false);
   const [isAnalyst, setIsAnalyst] = useState<boolean>(false);
   const [result, setResult] = useState<IReccommendMovie[]>([]);
-  const [resultAnalyst, setResultAnalyst] = useState<string>();
+  const [resultAnalyst, setResultAnalyst] = useState<string[]>([]);
 
   useEffect(() => {
     if(isWorking){
@@ -21,7 +21,7 @@ const HomePage:React.FC = () =>{
         }).catch((err)=>{
           console.log(err);
         })
-      }, 10000);
+      }, 20000);
     
       return () => clearInterval(interval);
     }
@@ -34,7 +34,9 @@ const HomePage:React.FC = () =>{
         Client.post('/start-analyst-one-post')
         .then((res)=>{
           if(res.status === 200)
-          setResultAnalyst(res.data)
+          setResultAnalyst(resultAnalyst => [...resultAnalyst, res.data])
+          if(res.status === 204)
+          setResultAnalyst(resultAnalyst => [...resultAnalyst,'No data to analyze'])
         }).catch((err)=>{
           console.log(err);
         })
@@ -91,7 +93,19 @@ const HomePage:React.FC = () =>{
             <button className="btn-stop" onClick={()=>{setIsAnalyst(false)}}>Stop</button>
           </div>
           <div className="status-container">
-            <div>{isAnalyst? 'Now Analyzing':'Now Stop Analyzing'}</div>
+            <div className="analyst-status">{isAnalyst? 'Now Analyzing':'Now Stop Analyzing'}</div>
+          </div>
+          <div className="show-analyst-container">
+              <table className="analyst-table">
+                { resultAnalyst.map((item, index)=>{
+                    return(
+                      <tr key={index} className="my-1-section">
+                        <td>{item}</td>
+                      </tr>
+                    )
+                  })
+                }
+              </table>
           </div>
         </div>
       </div>
